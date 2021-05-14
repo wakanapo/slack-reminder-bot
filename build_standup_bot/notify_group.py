@@ -17,7 +17,7 @@ def send_message(message):
     url = get_webhook()
     payload = {"text": message}
     headers = {"content-type": "application/json"}
-    if url is None:
+    if url is "":
         print(f"Dry run: {json.dumps(payload)}")
         return
     response = requests.post(

@@ -25,4 +25,4 @@ def save_groups(groups):
 
 
 def get_webhook():
-    return os.getenv("WEBHOOK_URL", None)
+    return os.getenv("WEBHOOK_URL", "")
