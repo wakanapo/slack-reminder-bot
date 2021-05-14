@@ -1,0 +1,41 @@
+name: Create Groups
+
+on:
+  schedule:
+    # Every JST 19:00 on Sunday
+    - cron: "0 10 * * 0"
+  workflow_dispatch:
+
+env:
+  EMAIL: ${{ secrets.EMAIL }}
+  ACCOUNT: ${{ secrets.ACCOUNT }}
+  WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v2
+        with:
+          ref: main
+      - name: Create Groups
+        run: python -m build_standup_bot.create_random_group
+      - name: git setting
+        run: |
+          git config --local user.email $EMAIL
+          git config --local user.name $ACCOUNT
+      - name: Commit files
+        run: |
+          git add .
+          git commit -m "Update Groups" -a
+          git push origin main
+      - name: Run image
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: 1.1.5
+      - name: Install Dependencies
+        run: poetry install --no-interaction
+      - name: Notify
+        run: poetry run python -m build_standup_bot.notify_group
